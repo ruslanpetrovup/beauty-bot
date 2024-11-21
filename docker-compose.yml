@@ -1,0 +1,18 @@
+services:
+  db:
+    container_name: beauty_bot_db
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: qwer1234
+      POSTGRES_DB: beauty_bot
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: postgres -c "password_encryption=md5"
+
+volumes:
+  postgres_data:
