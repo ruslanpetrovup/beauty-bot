@@ -23,16 +23,33 @@ Telegram бот для автоматизации записи клиентов 
 
 ## Структура проекта
 
-src/
-├── bot/
-│ ├── scenes/
-│ │ ├── master/
-│ │ └── client/
-│ └── index.js
-├── db/
-│ ├── models/
-│ └── index.js
-└── index.js
+src/  
+├── bot/  
+│   ├── scenes/  
+│   │   ├── master/  
+│   │   │   ├── broadcast.js  
+│   │   │   ├── index.js  
+│   │   │   ├── profileSettings.js  
+│   │   │   ├── registration.js  
+│   │   │   ├── schedule.js  
+│   │   │   └── services.js  
+│   │   └── client/  
+│   │       ├── appointments.js  
+│   │       ├── booking.js  
+│   │       ├── index.js  
+│   │       ├── profileSettings.js  
+│   │       └── registration.js  
+│   └── index.js  
+├── db/  
+│   ├── models/  
+│   │   ├── appointment.js  
+│   │   ├── client.js  
+│   │   ├── index.js  
+│   │   ├── master.js  
+│   │   ├── schedule.js  
+│   │   └── service.js  
+│   └── index.js  
+└── index.js  
 
 ## Сцены бота
 
