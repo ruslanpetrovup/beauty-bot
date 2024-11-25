@@ -17,8 +17,9 @@ const {
 } = require("./src/bot/scenes/client");
 
 const sequelize = require("./src/db");
-const { Master, Client, Service, Appointment } = require("./src/db/models");
+const { Master, Client, Service, Appointment, Admin } = require("./src/db/models");
 const { clientProfileSettings } = require("./src/bot/scenes/client/profileSettings");
+const statistics = require("./src/bot/scenes/admin/statistics");
 
 // Инициализация бота
 const bot = new Telegraf(process.env.BOT_TOKEN);
@@ -34,6 +35,7 @@ const stage = new Scenes.Stage([
   booking,
   appointmentManagement,
   clientProfileSettings,
+  statistics,
 ]);
 
 // Middleware
@@ -45,6 +47,10 @@ bot.command("start", async (ctx) => {
   try {
     const masterId = ctx.startPayload;
 
+    const admin = await Admin.findOne({
+      where: { telegramId: ctx.from.id.toString() },
+    });
+
     // Проверяем, существует ли уже пользователь
     const existingMaster = await Master.findOne({
       where: { telegramId: ctx.from.id.toString() },
@@ -53,6 +59,19 @@ bot.command("start", async (ctx) => {
     const existingClient = await Client.findOne({
       where: { telegramId: ctx.from.id.toString() },
     });
+
+    // Если пользователь является админом
+    if(admin) {
+      return await ctx.reply("Добро пожаловать в админку! Выберите действие:", {
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: "Статистика", callback_data: "admin_statistics" }],
+            // [{ text: "Настройки профиля", callback_data: "admin_profile_settings" }],
+            // [{ text: "Создать рассылк", callback_data: "admin_create_broadcast" }],
+          ],
+        },
+      });
+    }
 
     // Если пользователь уже зарегистрирован
     if (existingMaster) {
@@ -166,6 +185,9 @@ bot.command("menu", async (ctx) => {
 // Обработчики callback-запросов
 bot.action("register_master", (ctx) => ctx.scene.enter("masterRegistration"));
 bot.action("register_client", (ctx) => ctx.scene.enter("clientRegistration"));
+
+// Обработчик для админки
+bot.action("admin_statistics", (ctx) => ctx.scene.enter("statistics"));
 
 // Добавляем обработчики для управления услугами и расписанием
 bot.action("setup_services", async (ctx) => {
